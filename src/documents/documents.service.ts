@@ -16,7 +16,7 @@ import { StepStatusEnum } from './entities/onboarding-instance-step.entity';
 import { InstanceEntity } from './entities/onboarding-instance.entity';
 import { v4 } from 'uuid';
 import { spawn } from 'child_process';
-import { format, parse } from 'date-fns';
+import { format, parse, parseISO } from 'date-fns';
 
 @Injectable()
 export class DocumentsService {
@@ -172,6 +172,8 @@ export class DocumentsService {
 
     const firstLine = lines[0];
     const ind = firstLine.slice(0, 1); // P, indicating a passport
+
+    if (ind.toUpperCase() != 'P') return false;
     const type = firstLine.slice(1, 2); // Type (for countries that distinguish between different types of passports)
     const country = firstLine.slice(2, 5); // Issuing country or organization (ISO 3166-1 alpha-3 code with modifications)
     const fullName = firstLine.slice(5, 43).replace(/</g, ' ').trim(); // Surname, followed by two filler characters, followed by given names. Given names are separated by single filler characters. Note that some countries does not differentiate between surname and given name
@@ -208,12 +210,7 @@ export class DocumentsService {
     // console.log(fourthCheckDigit);
     // console.log(fifthCheckDigit);
 
-    const parsedDate = parse(
-      identificationStepData.birthdate,
-      'dd/MM/yyyy',
-      new Date(),
-    );
-
+    const parsedDate = parseISO(identificationStepData.birthdate);
     if (
       fullName
         .toUpperCase()
