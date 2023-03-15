@@ -9,7 +9,9 @@ import { FlowStepEntity } from './onboarding-flow-step.entity';
 import { InstanceEntity } from './onboarding-instance.entity';
 
 export enum StepStatusEnum {
-  pending = 'pending',
+  started = 'started',
+  processing = 'processing',
+  failed = 'failed',
   completed = 'completed',
 }
 

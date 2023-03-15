@@ -3,7 +3,7 @@ import { DocumentTypeEnum } from './document-type.enum';
 export interface IdentificationStepData {
   firstName: string;
   familyName: string;
-  birthDate: Date;
+  birthdate: string;
   address: string;
   country: string;
   securityNumber: string;
