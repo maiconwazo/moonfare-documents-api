@@ -123,7 +123,13 @@ export class DocumentsService {
   ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       try {
-        const scriptPath = join('assets', 'scripts', scriptName, 'main.py');
+        const scriptPath = join(
+          ...(process.env.NODE_ENV === 'development' ? [__dirname, '..'] : []),
+          'assets',
+          'scripts',
+          scriptName,
+          'main.py',
+        );
         const proc = spawn(process.env.PYTHON, [
           scriptPath,
           `-i ${documentPath}`,
@@ -176,7 +182,7 @@ export class DocumentsService {
     // console.log(fullName);
 
     const secondLine = lines[1];
-    const passportNumber = secondLine.slice(0, 8); // Passport number
+    const passportNumber = secondLine.slice(0, 9); // Passport number
     const firstCheckDigit = secondLine.slice(9, 10); // Check digit over digits 1–9
     const nationality = secondLine.slice(10, 13); // Nationality (ISO 3166-1 alpha-3 code with modifications)
     const birthdate = secondLine.slice(13, 19); // Date of birth (YYMMDD)
@@ -215,7 +221,8 @@ export class DocumentsService {
     )
       return false;
     if (format(parsedDate, 'yyMMdd') != birthdate) return false;
-    if (identificationStepData.documentNumber != passportNumber) return false;
+    if (passportNumber.indexOf(identificationStepData.documentNumber) < 0)
+      return false;
 
     return true;
   }
