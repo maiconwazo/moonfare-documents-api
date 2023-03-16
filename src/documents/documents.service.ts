@@ -110,6 +110,7 @@ export class DocumentsService {
       unlinkSync(documentPath);
     }
 
+    documentStep.updatedAt = new Date();
     documentStep.status = isDocumentOk
       ? StepStatusEnum.completed
       : StepStatusEnum.failed;
