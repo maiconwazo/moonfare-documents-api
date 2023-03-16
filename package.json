@@ -33,15 +33,13 @@
     "amqplib": "^0.10.3",
     "date-fns": "^2.29.3",
     "mysql2": "^3.2.0",
-    "node-native-ocr": "^0.3.6",
-    "node-tesseract-ocr": "^2.2.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "text-from-image": "^1.1.1",
-    "typeorm": "^0.3.12"
+    "typeorm": "^0.3.12",
+    "@nestjs/cli": "^9.0.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
     "@types/express": "^4.17.13",

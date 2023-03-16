@@ -1,11 +1,13 @@
+import { getDataSourceToken } from '@nestjs/typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm/dist';
 import { DataSource } from 'typeorm';
 import { InstanceEntity } from './entities/onboarding-instance.entity';
 
 export const documentProviders = [
   {
-    provide: 'INSTANCE_REPOSITORY',
+    provide: getRepositoryToken(InstanceEntity),
     useFactory: (dataSource: DataSource) =>
       dataSource.getRepository(InstanceEntity),
-    inject: ['DATA_SOURCE'],
+    inject: [getDataSourceToken()],
   },
 ];

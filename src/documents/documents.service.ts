@@ -1,12 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
-import {
-  existsSync,
-  mkdir,
-  mkdirSync,
-  unlinkSync,
-  writeFile,
-  writeFileSync,
-} from 'fs';
+import { Injectable } from '@nestjs/common';
+import { existsSync, mkdirSync, unlinkSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { Repository } from 'typeorm';
 import { DocumentStepData } from './contracts/document-step-data';
@@ -17,11 +10,12 @@ import { InstanceEntity } from './entities/onboarding-instance.entity';
 import { v4 } from 'uuid';
 import { spawn } from 'child_process';
 import { format, parse, parseISO } from 'date-fns';
+import { InjectRepository } from '@nestjs/typeorm/dist';
 
 @Injectable()
 export class DocumentsService {
   constructor(
-    @Inject('INSTANCE_REPOSITORY')
+    @InjectRepository(InstanceEntity)
     private instanceStepRepository: Repository<InstanceEntity>,
   ) {}
 
@@ -59,11 +53,11 @@ export class DocumentsService {
     ) as IdentificationStepData;
 
     const documentData = JSON.parse(documentStep.data) as DocumentStepData;
-
     const response = await fetch(documentData.documentUrl).then((res) => res);
+
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const tempFolder = join(__dirname, 'temp');
+    const tempFolder = './temp';
     if (!existsSync(tempFolder)) mkdirSync(tempFolder);
 
     const documentPath = join(tempFolder, v4());
@@ -129,26 +123,22 @@ export class DocumentsService {
   ): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       try {
-        const scriptPath = join(
-          __dirname,
-          '..',
-          'assets',
-          'scripts',
-          scriptName,
-          'main.py',
-        );
-        const process = spawn('python', [scriptPath, `-i ${documentPath}`]);
+        const scriptPath = join('assets', 'scripts', scriptName, 'main.py');
+        const proc = spawn(process.env.PYTHON, [
+          scriptPath,
+          `-i ${documentPath}`,
+        ]);
 
         let result = '';
-        process.stdout.on('data', (data) => {
+        proc.stdout.on('data', (data) => {
           result += data;
         });
 
-        process.stdout.on('error', (err) => {
+        proc.stdout.on('error', (err) => {
           reject(err);
         });
 
-        process.stdout.on('end', () => {
+        proc.stdout.on('end', () => {
           if (!result) resolve(false);
           else resolve(validationMethod(result.trim(), identificationStepData));
         });
