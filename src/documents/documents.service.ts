@@ -243,7 +243,7 @@ export class DocumentsService {
           isOk = this.isCompatible(firstName, infosFromDocument, '2.', '2');
           break;
         case 'birthdate':
-          const parsedDate = parse(entry[1], 'dd/MM/yyyy', new Date());
+          const parsedDate = parseISO(entry[1]);
           const formatedDate = format(parsedDate, 'dd.MM.yy');
 
           isOk = this.isCompatible(formatedDate, infosFromDocument, '3.', '3');
